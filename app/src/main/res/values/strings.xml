@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">SpyRecorder</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_history">History</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string-array name="pref_file_length_names">
+        <item>10 секунд</item>
+        <item>30 секунд</item>
+        <item>1 минута</item>
+        <item>3 минуты</item>
+    </string-array>
+    <string-array name="pref_file_length_values">
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+    </string-array>
+</resources>

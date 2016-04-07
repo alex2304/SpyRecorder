@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory>
+        android:key="pref_category_main"
+        android:title="Основные"
+        <EditTextPreference
+            android:key="pref_disk_limit"
+            android:summary="Сколько свободного пространства в памяти телефона могут занимать аудиофайлы (МБ)"
+            android:title="Лимит свободного места">
+        </EditTextPreference>
+        <ListPreference
+            android:entries="@array/pref_file_length_names"
+            android:entryValues="@array/pref_file_length_values"
+            android:key="pref_file_length"
+            android:summary="Выберите продолжительность одного аудиофрагмента"
+            android:title="Длина фрагмента">
+        </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>
