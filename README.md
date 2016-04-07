@@ -1,0 +1,2 @@
+# SpyRecorder
+Аудиорегистратор для Android
