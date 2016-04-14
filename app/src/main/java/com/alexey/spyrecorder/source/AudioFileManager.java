@@ -85,6 +85,31 @@ public class AudioFileManager {
         return recordedFiles;
     }
 
+    public boolean removeFile(int index){
+        if (recordedFiles == null) return false;
+        if (recordedFiles.isEmpty() || index >= recordedFiles.size() || index < 0) return false;
+
+        AudioEntity removedAudioEntity = recordedFiles.remove(index);
+        if (removedAudioEntity != null){
+            File removingFile = new File(removedAudioEntity.getFilePathName());
+            removingFile.delete();
+        }
+        return true;
+    }
+
+    /**Получение доступного пространства на устройстве (в байтах) **/
+    public long getRemainingDiskSpace(long availableSpace){
+        getAudioListFromFiles(null);
+        long filesSize = 0;
+        for (AudioEntity e : recordedFiles){
+            File audioFile = new File(e.getFilePathName());
+            if (audioFile.exists()){
+                filesSize += audioFile.length();
+            }
+        }
+        return (availableSpace - filesSize);
+    }
+
     public String resolveAudioFileName(){
         File file = new File(AUDIO_RECORDER_PATH, AUDIO_RECORDER_FOLDER);
 

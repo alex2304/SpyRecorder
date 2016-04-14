@@ -8,14 +8,14 @@
 
     <string-array name="pref_file_length_names">
         <item>10 секунд</item>
+        <item>20 секунд</item>
         <item>30 секунд</item>
         <item>1 минута</item>
-        <item>3 минуты</item>
     </string-array>
     <string-array name="pref_file_length_values">
         <item>10</item>
+        <item>20</item>
         <item>30</item>
         <item>60</item>
-        <item>180</item>
     </string-array>
 </resources>

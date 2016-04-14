@@ -46,6 +46,7 @@ public class AudioEntity implements Parcelable, Comparable<AudioEntity>{
         return lastModifiedDate;
     }
 
+
     public void rename(String newFileName){
         File audioFile = new File(filePath + "/" + fileName);
         if (audioFile.exists()) {
@@ -63,6 +64,10 @@ public class AudioEntity implements Parcelable, Comparable<AudioEntity>{
 
     public int getId() {
         return id;
+    }
+
+    public String getFilePathName(){
+        return getFilePath() + "/" + getFileName();
     }
 
     public void setId(int id) {

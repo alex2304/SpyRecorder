@@ -31,24 +31,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "audioLog";
     //ѕараметры звукозаписи
-    private static final int RECORDER_BPP = 16;
     private static final int RECORDER_SAMPLERATE = 44100;                                //с какой частотой считываетс€ звук, √ц
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;           //кол-во каналов (1 или 2)
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;  //сколько пам€ти занимает одно считывание звука (бит)
+    private static final int RECORDER_CHANNELS_COUNT = (RECORDER_CHANNELS == AudioFormat.CHANNEL_IN_STEREO) ? 2 : 1;
+    private static final int RECORDER_BPP = (RECORDER_AUDIO_ENCODING == AudioFormat.ENCODING_PCM_16BIT) ? 16: 8;
     //”казатели на элементы интерфейса
     private AudioRecord audioRecorder;
     private ImageButton buttonRec, buttonStop, showHistoryButton;
     private Chronometer timer;
     private NumberPicker recordTimePicker;
 
-    private int recTime = 10;
-    private int maxDiskSpace;
+    private long currFileSize;
+    private long maxDiskSpace;
+    private long remainingDiskSpace;
+    private int recTime;
     private int myBufferSize;
     private boolean isReading, isRecording;
     private Thread recordingThread;
     private AudioFileManager audioFileManager;
 
-    private SharedPreferences sp;
+    private SharedPreferences sp; //дл€ настроек
+
 
 
     private void createAudioRecorder() {
@@ -111,10 +115,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }*/
             }
         });
-        createAudioRecorder();
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         readPreferenceSettings();
+        createAudioRecorder();
     }
 
 
@@ -196,6 +200,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //timer.stop();
             try {
                 os.close();
+                remainingDiskSpace = audioFileManager.getRemainingDiskSpace(maxDiskSpace);
+                boolean allFilesRemovedFlag = false;
+                while (currFileSize > remainingDiskSpace && !allFilesRemovedFlag){
+                    allFilesRemovedFlag = !audioFileManager.removeFile(0); //всегда удал€етс€ самый первый файл, т.к. они уже отсортированы по дате
+                    remainingDiskSpace = audioFileManager.getRemainingDiskSpace(maxDiskSpace);
+                }
+                if (allFilesRemovedFlag && currFileSize > remainingDiskSpace){ //все файлы удалены, а места всЄ равно нет
+                    //throw exc;
+                }
                 String audioFileName = audioFileManager.resolveAudioFileName();
                 copyWaveFile(tempFileName, audioFileName);
                 Log.d(TAG, "Temp file writed to " + audioFileName);
@@ -362,8 +375,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void readPreferenceSettings(){
         if (!isRecording) {
-            maxDiskSpace = Integer.parseInt(sp.getString("pref_disk_limit", "100"));
-            recTime = Integer.parseInt(sp.getString("pref_file_length", "10"));
+            maxDiskSpace = (long)Integer.parseInt(sp.getString("pref_disk_limit", "50"));
+            maxDiskSpace *= (1024 * 1024);
+            recTime = Integer.parseInt(sp.getString("pref_file_length", "20"));
+            currFileSize = RECORDER_SAMPLERATE * RECORDER_BPP * RECORDER_CHANNELS_COUNT * recTime + 44; //44 байта занимает заголовок WAV-файла
         }
     }
 }
